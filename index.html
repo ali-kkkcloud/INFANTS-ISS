@@ -632,46 +632,141 @@
                 return;
             }
 
-            showMessage('🔄 Testing connection...', 'info');
+            showMessage('🔄 Testing connection... Please wait', 'info');
 
-            // First test if the spreadsheet is accessible
-            const testUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${SHEETS_API_KEY}`;
+            // Step 1: Test basic spreadsheet access
+            const basicTestUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${SHEETS_API_KEY}`;
             
-            fetch(testUrl)
+            fetch(basicTestUrl)
                 .then(response => {
+                    console.log('API Response Status:', response.status);
+                    
                     if (response.status === 401) {
-                        throw new Error('API Key invalid or expired. Please check your Google Cloud Console.');
+                        throw new Error('401 UNAUTHORIZED: API key is invalid, expired, or lacks permissions');
                     }
                     if (response.status === 403) {
-                        throw new Error('API Key lacks permissions. Enable Google Sheets API in Google Cloud Console.');
+                        throw new Error('403 FORBIDDEN: API key restrictions or Google Sheets API not enabled');
                     }
                     if (response.status === 404) {
-                        throw new Error('Spreadsheet not found. Check if sheet is publicly accessible.');
+                        throw new Error('404 NOT FOUND: Spreadsheet ID is wrong or sheet is not publicly accessible');
+                    }
+                    if (response.status === 400) {
+                        throw new Error('400 BAD REQUEST: Malformed request or invalid spreadsheet ID format');
+                    }
+                    
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error('API Error Details:', data.error);
+                        throw new Error(`API Error: ${data.error.message} (Code: ${data.error.code})`);
+                    }
+                    
+                    // Success - now test reading data
+                    showMessage('✅ Basic connection successful! Testing data access...', 'success');
+                    return testDataAccess();
+                })
+                .catch(error => {
+                    console.error('Connection Error:', error);
+                    showDetailedError(error);
+                });
+        }
+
+        function testDataAccess() {
+            // Test reading Issues sheet
+            const dataTestUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Issues!A1:M10?key=${SHEETS_API_KEY}`;
+            
+            return fetch(dataTestUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Data access failed: ${response.status} ${response.statusText}`);
                     }
                     return response.json();
                 })
                 .then(data => {
                     if (data.error) {
-                        throw new Error(data.error.message);
-                    } else {
-                        showMessage('✅ Connection successful! SLA Tracker is ready to use.', 'success');
-                        // Test reading Issues sheet
-                        loadIssuesData();
+                        throw new Error(`Data access error: ${data.error.message}`);
                     }
+                    
+                    showMessage('✅ Full connection successful! SLA Tracker ready to use.', 'success');
+                    loadIssuesData();
+                    return true;
                 })
                 .catch(error => {
-                    console.error('Connection Error:', error);
-                    showMessage(`❌ Connection failed: ${error.message}`, 'error');
-                    
-                    // Show detailed troubleshooting
-                    showMessage(`
-                        🔧 Troubleshooting Steps:
-                        1. Make sure Google Sheet is set to "Anyone with the link can view"
-                        2. Verify API key in Google Cloud Console
-                        3. Enable Google Sheets API in your project
-                        4. Check if API key has proper restrictions
-                    `, 'info');
+                    console.error('Data Access Error:', error);
+                    showMessage(`❌ Data access failed: ${error.message}`, 'error');
+                    showTroubleshootingSteps();
                 });
+        }
+
+        function showDetailedError(error) {
+            let errorMessage = `❌ Connection Failed: ${error.message}`;
+            let troubleshooting = '';
+
+            if (error.message.includes('401')) {
+                troubleshooting = `
+                🔧 <strong>API Key Issues - Fix Steps:</strong><br>
+                1. Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console - Credentials</a><br>
+                2. Find your API key → Click Edit (pencil icon)<br>
+                3. <strong>Application restrictions:</strong> Set to "None"<br>
+                4. <strong>API restrictions:</strong> Set to "Don't restrict key"<br>
+                5. Click Save and test again<br><br>
+                
+                <strong>If still not working:</strong><br>
+                • Create a new API key<br>
+                • Make sure Google Sheets API is enabled<br>
+                • Wait 5 minutes for changes to propagate
+                `;
+            } else if (error.message.includes('403')) {
+                troubleshooting = `
+                🔧 <strong>Permission Issues - Fix Steps:</strong><br>
+                1. Enable Google Sheets API in <a href="https://console.cloud.google.com/apis/library" target="_blank">API Library</a><br>
+                2. Check API key restrictions (remove all restrictions)<br>
+                3. Make sure you have billing enabled (required for API access)<br>
+                4. Verify project has Google Sheets API enabled
+                `;
+            } else if (error.message.includes('404')) {
+                troubleshooting = `
+                🔧 <strong>Spreadsheet Access Issues - Fix Steps:</strong><br>
+                1. Open your Google Sheet<br>
+                2. Click "Share" button (top-right)<br>
+                3. Change to "Anyone with the link" → "Editor"<br>
+                4. Make sure the spreadsheet ID is correct<br>
+                5. Test the link in an incognito window
+                `;
+            }
+
+            showMessage(errorMessage, 'error');
+            if (troubleshooting) {
+                showMessage(troubleshooting, 'info');
+            }
+        }
+
+        function showTroubleshootingSteps() {
+            const troubleshooting = `
+            🛠️ <strong>Complete Troubleshooting Checklist:</strong><br><br>
+            
+            <strong>1. Google Cloud Console Setup:</strong><br>
+            • Go to console.cloud.google.com<br>
+            • Create/select project<br>
+            • APIs & Services → Library → Enable "Google Sheets API"<br>
+            • Credentials → Create API Key<br>
+            • Edit API Key → Remove ALL restrictions<br><br>
+            
+            <strong>2. Google Sheet Setup:</strong><br>
+            • Open your sheet: <a href="https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}" target="_blank">Click here</a><br>
+            • Share → "Anyone with the link" → "Editor"<br>
+            • Make sure you have "Issues" and "History Log" sheets<br><br>
+            
+            <strong>3. Test Direct API Call:</strong><br>
+            • Open this URL in new tab:<br>
+            <a href="https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${SHEETS_API_KEY}" target="_blank">Test API Call</a><br>
+            • Should show spreadsheet info, not error<br><br>
+            
+            <strong>Need help?</strong> Screenshot the error and share!
+            `;
+            
+            showMessage(troubleshooting, 'info');
         }
 
         // Data functions
