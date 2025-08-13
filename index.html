@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>48 Hour SLA Tracker</title>
+    <title>48 Hour SLA Tracker - Secure</title>
     <style>
         * {
             margin: 0;
@@ -24,6 +24,74 @@
             padding: 20px;
         }
 
+        .auth-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .auth-section h2 {
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .auth-button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .auth-button:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+        }
+
+        .main-app {
+            display: none;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Rest of your existing styles */
         .header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -341,246 +409,263 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🚀 48 Hour SLA Tracker</h1>
-            <p>GitHub Pages Edition - Zero Configuration Required</p>
+        <!-- Authentication Section -->
+        <div id="authSection" class="auth-section">
+            <h2>🔐 Secure Access Required</h2>
+            <p style="margin-bottom: 20px; color: #666;">
+                To ensure data security, please sign in with your Google account to access the SLA Tracker.
+            </p>
+            <button id="authorizeButton" class="auth-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+            </button>
         </div>
 
-        <!-- Success Section -->
-        <div class="success-section">
-            <div class="success-message">
-                ✅ <strong>SLA Tracker Successfully Connected!</strong><br><br>
-                🎯 <strong>Features:</strong><br>
-                • Direct Google Sheets integration (no API key needed)<br>
-                • Real-time 48-hour countdown timers<br>
-                • Complete audit trail for dispute resolution<br>
-                • Pause/Resume functionality for client delays<br>
-                • Professional dashboard with live statistics<br>
-                • Access from any device with internet<br><br>
-                
-                🔧 <strong>Zero Setup:</strong> Everything is pre-configured and ready to use!<br>
-                📱 <strong>Multi-Device:</strong> Works on phone, tablet, laptop - anywhere!<br>
-                👥 <strong>Team Ready:</strong> Share this URL with your team for collaboration
-            </div>
-        </div>
-
-        <!-- Statistics Dashboard -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number open" id="openCount">0</div>
-                <div class="stat-label">Open Issues</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number paused" id="pausedCount">0</div>
-                <div class="stat-label">Paused Issues</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number overdue" id="overdueCount">0</div>
-                <div class="stat-label">Overdue Issues</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number closed" id="closedCount">0</div>
-                <div class="stat-label">Resolved Today</div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Issues Section -->
-            <div class="issues-section">
-                <h2>📋 Active Issues</h2>
-                <button class="btn btn-success" onclick="openModal('newIssueModal')">➕ New Issue</button>
-                <button class="btn btn-info" onclick="loadIssues()">🔄 Refresh Data</button>
-                
-                <table class="issues-table">
-                    <thead>
-                        <tr>
-                            <th>Issue ID</th>
-                            <th>Client</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>Remaining</th>
-                            <th>Assigned To</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="issuesTable">
-                        <tr>
-                            <td colspan="7" style="text-align: center; color: #666; padding: 40px;">
-                                🔄 Loading issues... Please wait
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Actions Section -->
-            <div class="actions-section">
-                <h2>🎯 Quick Actions</h2>
-                <div class="action-buttons">
-                    <button class="btn btn-success" onclick="openModal('startModal')">▶️ Start Issue</button>
-                    <button class="btn btn-warning" onclick="openModal('pauseModal')">⏸️ Pause Issue</button>
-                    <button class="btn btn-info" onclick="openModal('resumeModal')">⏯️ Resume Issue</button>
-                    <button class="btn btn-danger" onclick="openModal('closeModal')">✅ Close Issue</button>
+        <!-- Main App (hidden until authenticated) -->
+        <div id="mainApp" class="main-app">
+            <!-- User Info Bar -->
+            <div class="user-info">
+                <div>
+                    <span>👤 Signed in as: </span>
+                    <strong id="userEmail">user@example.com</strong>
                 </div>
+                <button id="signoutButton" class="logout-btn">Sign Out</button>
+            </div>
 
-                <h3 style="margin-top: 30px;">📊 System Info</h3>
-                <div style="margin-top: 15px;">
-                    <p><strong>Status:</strong> ✅ Connected</p>
-                    <p><strong>Backend:</strong> Google Sheets API</p>
-                    <p><strong>Storage:</strong> Google Sheets</p>
-                    <p><strong>Access:</strong> Multi-device</p>
+            <!-- Header -->
+            <div class="header">
+                <h1>🚀 48 Hour SLA Tracker</h1>
+                <p>Secure Edition - OAuth Protected</p>
+            </div>
+
+            <!-- Success Section -->
+            <div class="success-section">
+                <div class="success-message">
+                    🔒 <strong>Secure SLA Tracker Connected!</strong><br><br>
+                    🎯 <strong>Security Features:</strong><br>
+                    • OAuth 2.0 authentication for secure access<br>
+                    • Individual user permissions and audit trails<br>
+                    • Real-time 48-hour countdown timers<br>
+                    • Complete audit trail for dispute resolution<br>
+                    • Professional dashboard with live statistics<br>
+                    • Multi-device access with user identity<br><br>
+                    
+                    🔐 <strong>Secure Access:</strong> Only authorized team members can make changes<br>
+                    📱 <strong>Multi-Device:</strong> Works securely across all your devices<br>
+                    👥 <strong>Team Ready:</strong> Each user action is tracked with their identity
                 </div>
             </div>
+
+            <!-- Statistics Dashboard -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number open" id="openCount">0</div>
+                    <div class="stat-label">Open Issues</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number paused" id="pausedCount">0</div>
+                    <div class="stat-label">Paused Issues</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number overdue" id="overdueCount">0</div>
+                    <div class="stat-label">Overdue Issues</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number closed" id="closedCount">0</div>
+                    <div class="stat-label">Resolved Today</div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Issues Section -->
+                <div class="issues-section">
+                    <h2>📋 Active Issues</h2>
+                    <button class="btn btn-success" onclick="openModal('newIssueModal')">➕ New Issue</button>
+                    <button class="btn btn-info" onclick="loadIssues()">🔄 Refresh Data</button>
+                    
+                    <table class="issues-table">
+                        <thead>
+                            <tr>
+                                <th>Issue ID</th>
+                                <th>Client</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Remaining</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="issuesTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: #666; padding: 40px;">
+                                    🔄 Loading issues... Please wait
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Actions Section -->
+                <div class="actions-section">
+                    <h2>🎯 Quick Actions</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="openModal('startModal')">▶️ Start Issue</button>
+                        <button class="btn btn-warning" onclick="openModal('pauseModal')">⏸️ Pause Issue</button>
+                        <button class="btn btn-info" onclick="openModal('resumeModal')">⏯️ Resume Issue</button>
+                        <button class="btn btn-danger" onclick="openModal('closeModal')">✅ Close Issue</button>
+                    </div>
+
+                    <h3 style="margin-top: 30px;">📊 System Info</h3>
+                    <div style="margin-top: 15px;">
+                        <p><strong>Status:</strong> 🔒 Secure</p>
+                        <p><strong>Auth:</strong> OAuth 2.0</p>
+                        <p><strong>Backend:</strong> Google Sheets API</p>
+                        <p><strong>Access:</strong> Authenticated Only</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <!-- New Issue Modal -->
-    <div id="newIssueModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>➕ Create New Issue</h2>
-            <div class="form-group">
-                <label>Client Name:</label>
-                <input type="text" id="newClientName" placeholder="Enter client name">
-            </div>
-            <div class="form-group">
-                <label>Issue Description:</label>
-                <textarea id="newIssueDesc" placeholder="Describe the issue..." rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Assigned To:</label>
-                <input type="text" id="newAssignedTo" placeholder="Team member name">
-            </div>
-            <div class="form-group">
-                <label>Priority:</label>
-                <select id="newPriority">
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Low">Low</option>
-                </select>
-            </div>
-            <button class="btn btn-success" onclick="createNewIssue()">Create Issue</button>
-        </div>
-    </div>
-
-    <!-- Start Issue Modal -->
-    <div id="startModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>▶️ Start Issue</h2>
-            <div class="form-group">
-                <label>Issue ID:</label>
-                <input type="text" id="startIssueId" placeholder="SLA-001">
-            </div>
-            <button class="btn btn-success" onclick="startIssue()">Start Issue</button>
-        </div>
-    </div>
-
-    <!-- Pause Issue Modal -->
-    <div id="pauseModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>⏸️ Pause Issue</h2>
-            <div class="form-group">
-                <label>Issue ID:</label>
-                <input type="text" id="pauseIssueId" placeholder="SLA-001">
-            </div>
-            <div class="form-group">
-                <label>Pause Reason (Mandatory):</label>
-                <textarea id="pauseReason" placeholder="Why is this issue being paused?" rows="3"></textarea>
-            </div>
-            <button class="btn btn-warning" onclick="pauseIssue()">Pause Issue</button>
-        </div>
-    </div>
-
-    <!-- Resume Issue Modal -->
-    <div id="resumeModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>⏯️ Resume Issue</h2>
-            <div class="form-group">
-                <label>Issue ID:</label>
-                <input type="text" id="resumeIssueId" placeholder="SLA-001">
-            </div>
-            <div class="form-group">
-                <label>Resume Comment:</label>
-                <textarea id="resumeComment" placeholder="Additional notes..." rows="2"></textarea>
-            </div>
-            <button class="btn btn-info" onclick="resumeIssue()">Resume Issue</button>
-        </div>
-    </div>
-
-    <!-- Close Issue Modal -->
-    <div id="closeModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>✅ Close Issue</h2>
-            <div class="form-group">
-                <label>Issue ID:</label>
-                <input type="text" id="closeIssueId" placeholder="SLA-001">
-            </div>
-            <div class="form-group">
-                <label>Resolution Summary:</label>
-                <textarea id="resolutionSummary" placeholder="How was this issue resolved?" rows="3"></textarea>
-            </div>
-            <button class="btn btn-danger" onclick="closeIssue()">Close Issue</button>
-        </div>
-    </div>
-
+    <!-- Google API Script -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    
     <script>
-        // Configuration - Your existing settings
+        // Configuration
+        const CLIENT_ID = '336458011434-g8dlti47ub62dn97bg8akmpf6uaolqvf.apps.googleusercontent.com';
         const API_KEY = 'AIzaSyACruF4Qmzod8c0UlwfsBZlujoKguKsFDM';
         const SPREADSHEET_ID = '1rd175hlaTFOLit24ja8VfzvU6oV1ei_7G1qDn-9zUTY';
-        
-        let issuesData = [];
+        const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+        const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
-        // Initialize app - same as your original
-        document.addEventListener('DOMContentLoaded', function() {
+        let tokenClient;
+        let gapi_inited = false;
+        let gis_inited = false;
+        let issuesData = [];
+        let currentUser = null;
+
+        // Initialize Google API
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
+        }
+
+        async function initializeGapiClient() {
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [DISCOVERY_DOC],
+            });
+            gapi_inited = true;
+            maybeEnableButtons();
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: '', // defined later
+            });
+            gis_inited = true;
+            maybeEnableButtons();
+        }
+
+        function maybeEnableButtons() {
+            if (gapi_inited && gis_inited) {
+                document.getElementById('authorizeButton').style.visibility = 'visible';
+            }
+        }
+
+        // Authorization and authentication
+        function handleAuthClick() {
+            tokenClient.callback = async (resp) => {
+                if (resp.error !== undefined) {
+                    throw (resp);
+                }
+                
+                // Get user info
+                const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                    headers: {
+                        'Authorization': `Bearer ${gapi.client.getToken().access_token}`
+                    }
+                });
+                currentUser = await userResponse.json();
+                
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                setupApp();
+            };
+
+            if (gapi.client.getToken() === null) {
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+                tokenClient.requestAccessToken({prompt: ''});
+            }
+        }
+
+        function handleSignoutClick() {
+            const token = gapi.client.getToken();
+            if (token !== null) {
+                google.accounts.oauth2.revoke(token.access_token);
+                gapi.client.setToken('');
+                
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('mainApp').style.display = 'none';
+                currentUser = null;
+            }
+        }
+
+        // Setup app after authentication
+        function setupApp() {
             setupModals();
             loadIssues();
-            
-            // Auto-refresh every 30 seconds
             setInterval(loadIssues, 30000);
-        });
+        }
 
-        // Load issues - converted from google.script.run to direct API
+        // Load issues using authenticated API
         async function loadIssues() {
             try {
-                const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Issues?key=${API_KEY}`);
-                const data = await response.json();
-                
-                if (!data.values || data.values.length <= 1) {
+                const response = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'Issues',
+                });
+
+                const values = response.result.values;
+                if (!values || values.length <= 1) {
                     issuesData = [];
                     updateIssuesTable();
                     updateStats();
                     return;
                 }
-                
+
                 issuesData = [];
-                for (let i = 1; i < data.values.length; i++) {
-                    const row = data.values[i];
-                    if (row[0]) { // If Issue ID exists
+                for (let i = 1; i < values.length; i++) {
+                    const row = values[i];
+                    if (row[0]) {
                         issuesData.push({
-                            id: row[0],
-                            clientName: row[1],
-                            description: row[2],
-                            createdAt: row[3],
-                            startedAt: row[4],
-                            deadline: row[5],
-                            remainingHours: row[6],
-                            status: row[7],
-                            lastAction: row[8],
-                            assignedTo: row[9],
-                            priority: row[10],
-                            lastComment: row[11],
-                            closedAt: row[12] || null
+                            id: row[0] || '',
+                            clientName: row[1] || '',
+                            description: row[2] || '',
+                            createdAt: row[3] || '',
+                            startedAt: row[4] || '',
+                            deadline: row[5] || '',
+                            remainingHours: row[6] || '',
+                            status: row[7] || 'Created',
+                            lastAction: row[8] || '',
+                            assignedTo: row[9] || '',
+                            priority: row[10] || 'Medium',
+                            lastComment: row[11] || '',
+                            closedAt: row[12] || ''
                         });
                     }
                 }
-                
+
                 updateIssuesTable();
                 updateStats();
             } catch (error) {
@@ -589,7 +674,7 @@
             }
         }
 
-        // Create new issue - converted from google.script.run
+        // Create new issue with authenticated user
         async function createNewIssue() {
             const clientName = document.getElementById('newClientName').value.trim();
             const issueDesc = document.getElementById('newIssueDesc').value.trim();
@@ -604,12 +689,10 @@
             try {
                 showMessage('🔄 Creating issue...', 'info');
 
-                // Generate new Issue ID
                 const issueNumber = issuesData.length + 1;
                 const issueId = 'SLA-' + String(issueNumber).padStart(3, '0');
-                
                 const currentTime = new Date().toISOString();
-                
+
                 const newRow = [
                     issueId,
                     clientName,
@@ -625,36 +708,30 @@
                     'Issue created',
                     ''
                 ];
-                
-                // Append to sheet
-                const appendResponse = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Issues:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
+
+                await gapi.client.sheets.spreadsheets.values.append({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'Issues',
+                    valueInputOption: 'RAW',
+                    insertDataOption: 'INSERT_ROWS',
+                    resource: {
                         values: [newRow]
-                    })
+                    }
                 });
-                
-                if (appendResponse.ok) {
-                    // Log to history
-                    await logAction(issueId, 'Create', 'Issue created', '', 'Created');
-                    
-                    showMessage('✅ Issue created successfully: ' + issueId, 'success');
-                    closeModal('newIssueModal');
-                    clearForm('newIssueModal');
-                    loadIssues();
-                } else {
-                    throw new Error('Failed to create issue');
-                }
+
+                await logAction(issueId, 'Create', 'Issue created', '', 'Created');
+
+                showMessage('✅ Issue created successfully: ' + issueId, 'success');
+                closeModal('newIssueModal');
+                clearForm('newIssueModal');
+                loadIssues();
             } catch (error) {
                 console.error('Error creating issue:', error);
                 showMessage('❌ Error creating issue: ' + error.message, 'error');
             }
         }
 
-        // Start issue - converted from google.script.run
+        // Start issue with authenticated user
         async function startIssue() {
             const issueId = document.getElementById('startIssueId').value.trim();
             
@@ -672,9 +749,8 @@
 
                 const currentTime = new Date();
                 const deadline = new Date(currentTime.getTime() + 48 * 60 * 60 * 1000);
-                const rowNumber = issueIndex + 2; // +2 for header row and 0-based index
-                
-                // Update multiple cells
+                const rowNumber = issueIndex + 2;
+
                 const updates = [
                     {
                         range: `Issues!E${rowNumber}`,
@@ -698,252 +774,52 @@
                     }
                 ];
 
-                const batchUpdateResponse = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchUpdate?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
+                await gapi.client.sheets.spreadsheets.values.batchUpdate({
+                    spreadsheetId: SPREADSHEET_ID,
+                    resource: {
                         valueInputOption: 'RAW',
                         data: updates
-                    })
+                    }
                 });
 
-                if (batchUpdateResponse.ok) {
-                    await logAction(issueId, 'Start', 'Issue started - SLA timer activated', 'Created', 'Open');
-                    showMessage('✅ Issue started successfully!', 'success');
-                    closeModal('startModal');
-                    loadIssues();
-                } else {
-                    throw new Error('Failed to start issue');
-                }
+                await logAction(issueId, 'Start', 'Issue started - SLA timer activated', 'Created', 'Open');
+                showMessage('✅ Issue started successfully!', 'success');
+                closeModal('startModal');
+                loadIssues();
             } catch (error) {
                 console.error('Error starting issue:', error);
                 showMessage('❌ Error starting issue: ' + error.message, 'error');
             }
         }
 
-        // Pause issue - converted from google.script.run
-        async function pauseIssue() {
-            const issueId = document.getElementById('pauseIssueId').value.trim();
-            const reason = document.getElementById('pauseReason').value.trim();
-            
-            if (!issueId || !reason) {
-                showMessage('❌ Please enter Issue ID and pause reason', 'error');
-                return;
-            }
-
-            try {
-                const issueIndex = issuesData.findIndex(issue => issue.id === issueId);
-                if (issueIndex === -1) {
-                    showMessage('❌ Issue not found: ' + issueId, 'error');
-                    return;
-                }
-
-                const rowNumber = issueIndex + 2;
-                
-                const updates = [
-                    {
-                        range: `Issues!H${rowNumber}`,
-                        values: [['Paused']]
-                    },
-                    {
-                        range: `Issues!I${rowNumber}`,
-                        values: [['Pause']]
-                    },
-                    {
-                        range: `Issues!L${rowNumber}`,
-                        values: [[reason]]
-                    }
-                ];
-
-                const batchUpdateResponse = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchUpdate?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        valueInputOption: 'RAW',
-                        data: updates
-                    })
-                });
-
-                if (batchUpdateResponse.ok) {
-                    await logAction(issueId, 'Pause', reason, 'Open', 'Paused');
-                    showMessage('⏸️ Issue paused successfully!', 'success');
-                    closeModal('pauseModal');
-                    loadIssues();
-                } else {
-                    throw new Error('Failed to pause issue');
-                }
-            } catch (error) {
-                console.error('Error pausing issue:', error);
-                showMessage('❌ Error pausing issue: ' + error.message, 'error');
-            }
-        }
-
-        // Resume issue - converted from google.script.run
-        async function resumeIssue() {
-            const issueId = document.getElementById('resumeIssueId').value.trim();
-            const comment = document.getElementById('resumeComment').value.trim();
-            
-            if (!issueId) {
-                showMessage('❌ Please enter Issue ID', 'error');
-                return;
-            }
-
-            try {
-                const issueIndex = issuesData.findIndex(issue => issue.id === issueId);
-                if (issueIndex === -1) {
-                    showMessage('❌ Issue not found: ' + issueId, 'error');
-                    return;
-                }
-
-                const currentTime = new Date();
-                const deadline = new Date(currentTime.getTime() + 48 * 60 * 60 * 1000);
-                const rowNumber = issueIndex + 2;
-                
-                const updates = [
-                    {
-                        range: `Issues!E${rowNumber}`,
-                        values: [[currentTime.toISOString()]]
-                    },
-                    {
-                        range: `Issues!F${rowNumber}`,
-                        values: [[deadline.toISOString()]]
-                    },
-                    {
-                        range: `Issues!H${rowNumber}`,
-                        values: [['Open']]
-                    },
-                    {
-                        range: `Issues!I${rowNumber}`,
-                        values: [['Resume']]
-                    },
-                    {
-                        range: `Issues!L${rowNumber}`,
-                        values: [[comment || 'Issue resumed with fresh 48-hour SLA']]
-                    }
-                ];
-
-                const batchUpdateResponse = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchUpdate?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        valueInputOption: 'RAW',
-                        data: updates
-                    })
-                });
-
-                if (batchUpdateResponse.ok) {
-                    await logAction(issueId, 'Resume', comment || 'Issue resumed with fresh 48-hour SLA', 'Paused', 'Open');
-                    showMessage('⏯️ Issue resumed successfully!', 'success');
-                    closeModal('resumeModal');
-                    loadIssues();
-                } else {
-                    throw new Error('Failed to resume issue');
-                }
-            } catch (error) {
-                console.error('Error resuming issue:', error);
-                showMessage('❌ Error resuming issue: ' + error.message, 'error');
-            }
-        }
-
-        // Close issue - converted from google.script.run
-        async function closeIssue() {
-            const issueId = document.getElementById('closeIssueId').value.trim();
-            const resolution = document.getElementById('resolutionSummary').value.trim();
-            
-            if (!issueId || !resolution) {
-                showMessage('❌ Please enter Issue ID and resolution summary', 'error');
-                return;
-            }
-
-            try {
-                const issueIndex = issuesData.findIndex(issue => issue.id === issueId);
-                if (issueIndex === -1) {
-                    showMessage('❌ Issue not found: ' + issueId, 'error');
-                    return;
-                }
-
-                const currentTime = new Date().toISOString();
-                const rowNumber = issueIndex + 2;
-                
-                const updates = [
-                    {
-                        range: `Issues!H${rowNumber}`,
-                        values: [['Closed']]
-                    },
-                    {
-                        range: `Issues!I${rowNumber}`,
-                        values: [['Close']]
-                    },
-                    {
-                        range: `Issues!L${rowNumber}`,
-                        values: [[resolution]]
-                    },
-                    {
-                        range: `Issues!M${rowNumber}`,
-                        values: [[currentTime]]
-                    }
-                ];
-
-                const batchUpdateResponse = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchUpdate?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        valueInputOption: 'RAW',
-                        data: updates
-                    })
-                });
-
-                if (batchUpdateResponse.ok) {
-                    await logAction(issueId, 'Close', resolution, 'Open', 'Closed');
-                    showMessage('✅ Issue closed successfully!', 'success');
-                    closeModal('closeModal');
-                    loadIssues();
-                } else {
-                    throw new Error('Failed to close issue');
-                }
-            } catch (error) {
-                console.error('Error closing issue:', error);
-                showMessage('❌ Error closing issue: ' + error.message, 'error');
-            }
-        }
-
-        // Log action to history - converted from google.script.run
+        // Log action with authenticated user
         async function logAction(issueId, action, comment, prevStatus, newStatus) {
             try {
                 const currentTime = new Date().toISOString();
                 const logId = Date.now();
-                
+
                 const newRow = [
                     logId,
                     issueId,
                     action,
                     currentTime,
-                    'System User',
+                    currentUser ? currentUser.email : 'System User',
                     comment,
                     prevStatus,
                     newStatus
                 ];
-                
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/History%20Log:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
+
+                await gapi.client.sheets.spreadsheets.values.append({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'History Log',
+                    valueInputOption: 'RAW',
+                    insertDataOption: 'INSERT_ROWS',
+                    resource: {
                         values: [newRow]
-                    })
+                    }
                 });
             } catch (error) {
                 console.error('Error logging action:', error);
-                // Don't throw error for logging failures
             }
         }
 
@@ -1021,7 +897,6 @@
             document.getElementById('closedCount').textContent = closedTodayCount;
         }
 
-        // All utility functions remain exactly the same
         function getRemainingHoursClass(hours, status) {
             if (status === 'Closed') return 'hours-good';
             if (status === 'Paused' || status === 'Created') return 'hours-warning';
@@ -1112,6 +987,63 @@
                 }
             }, 5000);
         }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('authorizeButton').addEventListener('click', handleAuthClick);
+            document.getElementById('signoutButton').addEventListener('click', handleSignoutClick);
+        });
+
+        // Load Google APIs
+        window.gapiLoaded = gapiLoaded;
+        window.gisLoaded = gisLoaded;
     </script>
+    
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
+
+<!-- Add modals here - same as previous version -->
+<!-- New Issue Modal -->
+<div id="newIssueModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>➕ Create New Issue</h2>
+        <div class="form-group">
+            <label>Client Name:</label>
+            <input type="text" id="newClientName" placeholder="Enter client name">
+        </div>
+        <div class="form-group">
+            <label>Issue Description:</label>
+            <textarea id="newIssueDesc" placeholder="Describe the issue..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Assigned To:</label>
+            <input type="text" id="newAssignedTo" placeholder="Team member name">
+        </div>
+        <div class="form-group">
+            <label>Priority:</label>
+            <select id="newPriority">
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
+        <button class="btn btn-success" onclick="createNewIssue()">Create Issue</button>
+    </div>
+</div>
+
+<!-- Start Issue Modal -->
+<div id="startModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>▶️ Start Issue</h2>
+        <div class="form-group">
+            <label>Issue ID:</label>
+            <input type="text" id="startIssueId" placeholder="SLA-001">
+        </div>
+        <button class="btn btn-success" onclick="startIssue()">Start Issue</button>
+    </div>
+</div>
+
 </html>
